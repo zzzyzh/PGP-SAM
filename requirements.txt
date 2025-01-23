@@ -1,0 +1,18 @@
+# conda create -n pgp-sam python==3.9 -y
+# conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
+
+numpy==1.26.4
+opencv-python
+scikit-image
+medpy
+SimpleITK
+pydicom
+nibabel
+einops
+pandas
+matplotlib
+tensorboard
+cmake==3.18.4
+MulticoreTSNE
+tqdm
+fvcore
