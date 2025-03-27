@@ -31,9 +31,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--run_name', type=str, default='pgp_sam')
 
 # Set-up Model    
-parser.add_argument('--task', type=str, default='ven', help='specify task')
 parser.add_argument('--dataset', type=str, default='bhx_sammed', help='specify dataset')
-parser.add_argument('--data_root_dir', type=str, default='dataset', help='specify dataset root path')
+parser.add_argument('--root_dir', type=str, default='/home/yanzhonghao/data', help='specify root path')
+parser.add_argument('--data_dir', type=str, default='datasets/medical', help='specify dataset path')
 parser.add_argument('--save_dir', type=str, default='experiments', help='specify save path')
 parser.add_argument('--num_classes', type=int, default=4, help='specify the classes of the dataset without the bg')
 parser.add_argument('--num_tokens', type=int, default=8, help='the num of prompts') 
@@ -128,11 +128,11 @@ class Trainer:
             self.scheduler = WarmupCosineLR(self.optimizer, warmup_iters=self.args.warmup_iters, total_iters=self.args.max_iterations, base_lr=self.args.lr, base_lr_end=1e-6)
     
     def set_gt_masks(self):
-        data_root_dir = osp.join(self.args.data_root_dir, self.args.task, self.args.dataset)
+        data_root_dir = osp.join(self.args.root_dir, self.args.data_dir, self.args.dataset)
         self.gt_masks = read_gt_masks(data_root_dir=data_root_dir, mask_size=self.image_size, mode='val')
 
     def cal_class_freq(self, mode='train', smoothing=1e-6):
-        data_root_dir = osp.join(self.args.data_root_dir, self.args.task, self.args.dataset)
+        data_root_dir = osp.join(self.args.root_dir, self.args.data_dir, self.args.dataset)
         gt_masks = read_gt_masks(data_root_dir=data_root_dir, mask_size=self.image_size, mode=mode)
 
         flattened_data = torch.tensor(np.array(list(gt_masks.values()))).view(-1)
@@ -386,7 +386,7 @@ def main_worker(rank, args):
 def set_logging_and_writer(args):
     now = datetime.now().strftime('%Y%m%d-%H%M')
     task = f'{args.sam_mode}_{args.model_type}_{now}'
-    save_dir = osp.join(args.save_dir, args.run_name, args.dataset, f'few_shot_{int(args.scale*100)}', task)
+    save_dir = osp.join(args.root_dir, args.save_dir, args.run_name, args.dataset, f'few_shot_{int(args.scale*100)}', task)
     
     writer = SummaryWriter(osp.join(save_dir, 'runs'))
     save_log_dir = osp.join(save_dir, 'log')
@@ -404,7 +404,7 @@ def set_dataloaders(args):
     
     # ======> Load Dataset-Specific Parameters
     scale = args.scale
-    data_root_dir = osp.join(args.data_root_dir, args.task, args.dataset)
+    data_root_dir = osp.join(args.root_dir, args.data_dir, args.dataset)
     train_dataset = TrainingDataset(
                         data_root_dir=data_root_dir,
                         scale=scale
@@ -428,13 +428,13 @@ def set_dataloaders(args):
                                   batch_size=args.batch_size, 
                                   num_workers=args.num_workers,
                                   shuffle=shuffle,
-                                  pin_memory=True,)
+                                  pin_memory=True)
     val_dataloader = DataLoader(dataset=val_dataset, 
                                 sampler=val_sampler,
-                                batch_size=32,
-                                num_workers=32,
+                                batch_size=args.batch_size,
+                                num_workers=args.num_workers,
                                 shuffle=False, 
-                                pin_memory=True,)
+                                pin_memory=True)
     
     return train_dataloader, val_dataloader
 

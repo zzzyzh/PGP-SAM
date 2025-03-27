@@ -17,7 +17,7 @@ from scipy.ndimage import gaussian_filter, map_coordinates
 
 class TestingDataset(Dataset):
     def __init__(self, 
-                 data_root_dir = "../../data/ven/bhx_sammed", 
+                 data_root_dir = "bhx_sammed", 
                  mode = "test", 
                  image_size = 512,
                  ):
@@ -65,7 +65,7 @@ class TestingDataset(Dataset):
 
 class TrainingDataset(Dataset):
     def __init__(self, 
-                data_root_dir = "../../data/ven/bhx_sammed",
+                data_root_dir = "bhx_sammed",
                 image_size = 512,
                 scale = 0.1,
                 ):

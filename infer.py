@@ -3,8 +3,8 @@ import os.path as osp
 import random 
 import argparse
 from tqdm import tqdm
-import csv
 
+import csv
 import numpy as np 
 import torch 
 from torch.utils.data import DataLoader
@@ -21,9 +21,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--run_name', type=str, default='pgp_sam')
 
 # Set-up Model
-parser.add_argument('--task', type=str, default='ven', help='specify task')
 parser.add_argument('--dataset', type=str, default='bhx_sammed', help='specify dataset')
-parser.add_argument('--data_root_dir', type=str, default='dataset', help='specify dataset root path')
+parser.add_argument('--root_dir', type=str, default='/home/yanzhonghao/data', help='specify root path')
+parser.add_argument('--data_dir', type=str, default='datasets/medical', help='specify dataset path')
 parser.add_argument('--save_dir', type=str, default='experiments', help='specify save path')
 parser.add_argument('--num_classes', type=int, default=8, help='specify the classes of the dataset without the bg')
 parser.add_argument('--num_tokens', type=int, default=8, help='the num of prompts')
@@ -34,8 +34,8 @@ parser.add_argument('--stage', type=int, default=2, help='specify the stage of d
 
 # Testing Strategy
 parser.add_argument('--scale', type=float, default=0.1, help='percentage of training data')
-parser.add_argument('--batch_size', type=int, default=32)
-parser.add_argument('--num_workers', type=int, default=32)
+parser.add_argument('--batch_size', type=int, default=16)
+parser.add_argument('--num_workers', type=int, default=16)
 parser.add_argument('--image_size', type=int, default=512, help='image_size')
 parser.add_argument('--resolution', type=int, default=512, help='image_size')
 parser.add_argument('--volume', type=bool, default=False, help='whether to evaluate test set in volume')
@@ -78,7 +78,7 @@ def test(args):
     image_size = args.image_size
     resolution = args.resolution
     
-    data_root_dir = osp.join(args.data_root_dir, args.task, args.dataset)
+    data_root_dir = osp.join(args.root_dir, args.data_dir, args.dataset)
     test_dataset = TestingDataset(
                         data_root_dir=data_root_dir,
                         mode='test',
@@ -90,7 +90,7 @@ def test(args):
     now = args.train_time
     task = f'{sam_mode}_{model_type}_{now}'
     settings = f'few_shot_{int(scale*100)}'
-    save_dir = osp.join(args.save_dir, run_name, dataset_name, settings, task) 
+    save_dir = osp.join(args.root_dir, args.save_dir, run_name, dataset_name, settings, task) 
     save_log_dir = osp.join(save_dir, 'log')
     save_ckpt_dir = osp.join(save_dir, 'ckpt')
     save_pred_dir = osp.join(save_dir, 'pred')
