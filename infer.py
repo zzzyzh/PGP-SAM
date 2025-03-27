@@ -23,7 +23,7 @@ parser.add_argument('--run_name', type=str, default='pgp_sam')
 # Set-up Model
 parser.add_argument('--dataset', type=str, default='bhx_sammed', help='specify dataset')
 parser.add_argument('--root_dir', type=str, default='/home/yanzhonghao/data', help='specify root path')
-parser.add_argument('--data_dir', type=str, default='datasets/medical', help='specify dataset path')
+parser.add_argument('--data_dir', type=str, default='datasets', help='specify dataset path')
 parser.add_argument('--save_dir', type=str, default='experiments', help='specify save path')
 parser.add_argument('--num_classes', type=int, default=8, help='specify the classes of the dataset without the bg')
 parser.add_argument('--num_tokens', type=int, default=8, help='the num of prompts')

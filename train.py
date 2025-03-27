@@ -33,12 +33,12 @@ parser.add_argument('--run_name', type=str, default='pgp_sam')
 # Set-up Model    
 parser.add_argument('--dataset', type=str, default='bhx_sammed', help='specify dataset')
 parser.add_argument('--root_dir', type=str, default='/home/yanzhonghao/data', help='specify root path')
-parser.add_argument('--data_dir', type=str, default='datasets/medical', help='specify dataset path')
+parser.add_argument('--data_dir', type=str, default='datasets', help='specify dataset path')
 parser.add_argument('--save_dir', type=str, default='experiments', help='specify save path')
 parser.add_argument('--num_classes', type=int, default=4, help='specify the classes of the dataset without the bg')
 parser.add_argument('--num_tokens', type=int, default=8, help='the num of prompts') 
 parser.add_argument('--sam_mode', type=str, default='vit_b', choices=['vit_b', 'vit_l'], help='specify backbone')
-parser.add_argument('--sam_ckpt', type=str, default='models/sam_vit_b_01ec64.pth', help='specify raw SAM ckpt path')
+parser.add_argument('--sam_ckpt', type=str, default='model_hub/sam/sam_vit_b_01ec64.pth', help='specify raw SAM ckpt path')
 parser.add_argument('--model_type', type=str, default='lora', help='specify the parameters involved in training')
 parser.add_argument('--stage', type=int, default=2, help='specify the stage of decoders')
 
@@ -442,8 +442,9 @@ def set_dataloaders(args):
 def set_model(args):
     
     # ======> Load Prototype-based Model
+    sam_ckpt = os.path.join(args.root_dir, args.sam_ckpt)
     model = PGP_SAM(
-                sam_checkpoint=args.sam_ckpt,
+                sam_checkpoint=sam_ckpt,
                 sam_mode=args.sam_mode,   
                 model_type=args.model_type,
                 stage=args.stage,
